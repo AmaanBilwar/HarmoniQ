@@ -1,7 +1,12 @@
 import cv2
 import os
+from dotenv import load_dotenv
 import time
 from nvidia import analyze_image
+from azure.storage.blob import BlobClient
+
+load_dotenv()
+azure_connection_string = os.environ.get('AZURE_CONNECTION_STRING')
 
 def make_dir_test():
     try:
@@ -77,7 +82,23 @@ def prompt_from_image():
             else:
                 print(f"No result for image {i + 1}")
 
+def upload_images():
+    container_name = 'makeuchackathon-imagestorage'
+    # Create a BlobServiceClient object
+    for i in range(5):
+        blob_name = f'captured_image_{i + 1}.jpg'
+        file_path = f'images-test-02/captured_image_{i + 1}.jpg'
+        
+        blob_client = BlobClient.from_connection_string(conn_str=azure_connection_string, container_name=container_name, blob_name=blob_name)
+        
+        try:
+              with open(file_path, 'rb') as data:
+                blob_client.upload_blob(data, overwrite=True)
+                print(f"Uploaded {blob_name} successfully.")
+        except Exception as e:
+            print(f'Failed to upload {blob_name}. Error: {e}')
 
 if __name__ == '__main__':
-    capture_images()
-    prompt_from_image()
+    # capture_images()
+    # prompt_from_image()
+    upload_images()

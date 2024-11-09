@@ -1,5 +1,7 @@
 import cv2 
 import os 
+from nvidia import analyze_image
+
 
 def make_dir():
     try:
@@ -43,3 +45,17 @@ def capture_image():
 
     cap.release()
     cv2.destroyAllWindows()
+
+
+def prompt_from_image():
+    image_path='images/captured_image.jpg'
+    result = analyze_image(image_path)
+    print(result)
+    
+
+
+  
+    
+# if __name__ == '__main__':
+#     prompt_from_image()
+    

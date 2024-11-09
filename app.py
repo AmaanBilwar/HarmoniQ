@@ -1,7 +1,7 @@
 import cv2 
 import os 
 from nvidia import analyze_image
-
+import time
 
 def make_dir_test():
     try:

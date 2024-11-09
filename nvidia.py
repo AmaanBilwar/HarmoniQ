@@ -51,6 +51,13 @@ def analyze_image(image_path):
                         if 'choices' in json_data and len(json_data['choices']) > 0:
                             delta = json_data['choices'][0].get('delta', {})
                             final_message += delta.get('content', '')
-        print(final_message)
+        if final_message:
+            return final_message.strip()
+        else:
+            return "No result"
     else:
-        print(response.json())
+        json_response = response.json()
+        if 'choices' in json_response and len(json_response['choices']) > 0:
+            return json_response['choices'][0]['text'].strip()
+        else:
+            return "No result"

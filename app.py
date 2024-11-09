@@ -2,6 +2,43 @@ import cv2
 import os 
 from nvidia import analyze_image
 import time
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+
+from dotenv import load_dotenv
+load_dotenv()
+LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
+
+
+'''
+implementation: 
+
+have a custom prompt from the user on what task theyre doing while listening to music for better results with music generation 
+
+maybe i should also ask for their fav genre of music and artists they listen to 
+
+which approach seems more suitable ? clicking 5 pics and then summarizing the emotions expresssed in them 
+or clicking 1 pic and summarizing the emotions expressed in it 
+and then generating prompts based on that ? and then generating music ? 
+
+
+Write algorithm 
+to pick  the best img to analyze + generate prompts 
+
+'''  
+
+def summarize_prompts(file_path):
+    with open(file_path, 'r') as file:
+        prompt_text = file.read()
+
+    chat = ChatOpenAI(api_key='LANGCHAIN_API_KEY')
+    prompt_template = ChatPromptTemplate.from_template("Summarize the following text: {text}")
+    prompt = prompt_template.format(text=prompt_text)
+
+    response = chat(prompt)
+    summary = response['choices'][0]['text'].strip()
+    print(summary)
+    return summary
 
 def make_dir_test():
     try:
@@ -33,7 +70,7 @@ def capture_images():
         print("Error: Could not open camera.")
         return
     
-    num_pic = 5
+    num_pic = 2
     picture_count = 0
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     start_time = time.time()
@@ -68,31 +105,19 @@ def capture_images():
     cv2.destroyAllWindows()
 
 def prompt_from_image():
-    for i in range(5):
-        image_path = f'images-test-02/captured_image_{i + 1}.jpg'
+    # for i in range(5):
+    #     image_path = f'images-test-02/captured_image_{i + 1}.jpg'
+    #     result = analyze_image(image_path)
+    #     with open('prompt.txt', 'w') as f:
+    #         f.write(result)
+    #         # print(result)
+    for i in range(2):
+        image_path = f'images-test-02/captured_image_{i+1}.jpg'
         result = analyze_image(image_path)
         print(result)
 
-
-
-'''
-implementation: 
-
-have a custom prompt from the user on what task theyre doing while listening to music for better results with music generation 
-
-maybe i should also ask for their fav genre of music and artists they listen to 
-
-which approach seems more suitable ? clicking 5 pics and then summarizing the emotions expresssed in them 
-or clicking 1 pic and summarizing the emotions expressed in it 
-and then generating prompts based on that ? and then generating music ? 
-
-
-Write algorithm 
-to pick  the best img to analyze + generate prompts 
-
-
-
-'''  
-    
 if __name__ == '__main__':
-    detect_faces_live()    
+    capture_images()
+    prompt_from_image()
+    
+    # summarize_prompts('prompt.txt')

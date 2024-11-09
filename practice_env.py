@@ -68,12 +68,16 @@ def capture_images():
     cv2.destroyAllWindows()
 
 def prompt_from_image():
-    for i in range(5):
-        image_path = f'images-test-02/captured_image_{i + 1}.jpg'
-        result = analyze_image(image_path)
-        print(result)
+    with open('prompt.txt', 'w') as f:
+        for i in range(5):
+            image_path = f'images-test-02/captured_image_{i + 1}.jpg'
+            result = analyze_image(image_path)
+            if result is not None:
+                f.write(result + '\n')
+            else:
+                print(f"No result for image {i + 1}")
 
-# Example usage
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     capture_images()
     prompt_from_image()

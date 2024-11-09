@@ -1,6 +1,8 @@
 /Lib
 /Scripts
-
-captured_image.jpg
+/__pycache__
 
 pyvenv.cfg
+
+
+.env

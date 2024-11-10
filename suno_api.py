@@ -38,11 +38,17 @@ def get_clip(clip_id):
     response = requests.get(url)
     return response.json()
 
-def generate_whole_song(clip_id):
-    payloyd = {"clip_id": clip_id}
-    url = f"{base_url}/api/concat"
-    response = requests.post(url, json=payload)
-    return response.json()
+# def generate_whole_song(clip_id):
+#     payloyd = {"clip_id": clip_id}
+#     url = f"{base_url}/api/concat"
+#     response = requests.post(url, json=payload)
+#     return response.json()
+
+
+'''
+And prompt properties here
+'''
+
 
 prompt = ''
 

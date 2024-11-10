@@ -1,16 +1,17 @@
-import cv2 
-import os 
+import cv2
+import os
 from nvidia import analyze_image
 import time
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 from dotenv import load_dotenv
+
 load_dotenv()
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
 
 
-'''
+"""
 implementation: 
 
 have a custom prompt from the user on what task theyre doing while listening to music for better results with music generation 
@@ -25,26 +26,31 @@ and then generating prompts based on that ? and then generating music ?
 Write algorithm 
 to pick  the best img to analyze + generate prompts 
 
-'''  
+"""
+
 
 def summarize_prompts(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         prompt_text = file.read()
 
-    chat = ChatOpenAI(api_key='LANGCHAIN_API_KEY')
-    prompt_template = ChatPromptTemplate.from_template("Summarize the following text: {text}")
+    chat = ChatOpenAI(api_key="LANGCHAIN_API_KEY")
+    prompt_template = ChatPromptTemplate.from_template(
+        "Summarize the following text: {text}"
+    )
     prompt = prompt_template.format(text=prompt_text)
 
     response = chat(prompt)
-    summary = response['choices'][0]['text'].strip()
+    summary = response["choices"][0]["text"].strip()
     print(summary)
     return summary
 
+
 def make_dir_test():
     try:
-        os.mkdir('images-test-02')
+        os.mkdir("images")
     except FileExistsError:
         pass
+
 
 def detect_faces_live(frame, face_cascade):
     if face_cascade.empty():
@@ -55,54 +61,69 @@ def detect_faces_live(frame, face_cascade):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Detect faces in the frame
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    faces = face_cascade.detectMultiScale(
+        gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+    )
 
     # Draw boxes around the detected faces
-    for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+    for x, y, w, h in faces:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
     return faces
 
+
 def capture_images():
     cap = cv2.VideoCapture(0)
-    
+
     if not cap.isOpened():
         print("Error: Could not open camera.")
         return
-    
+
     num_pic = 2
     picture_count = 0
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+    )
     start_time = time.time()
-    
+
     while picture_count < num_pic:
         ret, frame = cap.read()
-        
+
         if not ret:
             print("Error: Cannot receive frame.")
             break
-        
+
         # Detect faces in the frame
         faces = detect_faces_live(frame, face_cascade)
 
         if len(faces) > 0 and (time.time() - start_time) >= 10:
             font = cv2.FONT_HERSHEY_COMPLEX
-            cv2.putText(frame, f'Picture {picture_count + 1}', (50, 50), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.imshow('Camera feed', frame)
-            
+            cv2.putText(
+                frame,
+                f"Picture {picture_count + 1}",
+                (50, 50),
+                font,
+                1,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+            cv2.imshow("Camera feed", frame)
+
             make_dir_test()
-            filename = f'images-test-02/captured_image_{picture_count + 1}.jpg'
+            filename = f"images/captured_image_{picture_count + 1}.jpg"
             cv2.imwrite(filename, frame)
             print(f"Image captured and saved as '{filename}'")
-            
+
             picture_count += 1
             start_time = time.time()  # Reset the timer after capturing an image
         else:
-            cv2.imshow('Camera feed', frame)
+            cv2.imshow("Camera feed", frame)
             cv2.waitKey(1)
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 def prompt_from_image():
     # for i in range(5):
@@ -112,12 +133,13 @@ def prompt_from_image():
     #         f.write(result)
     #         # print(result)
     for i in range(2):
-        image_path = f'images-test-02/captured_image_{i+1}.jpg'
+        image_path = f"images-test-02/captured_image_{i+1}.jpg"
         result = analyze_image(image_path)
         print(result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     capture_images()
     prompt_from_image()
-    
+
     # summarize_prompts('prompt.txt')

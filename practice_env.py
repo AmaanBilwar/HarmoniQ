@@ -1,9 +1,12 @@
 import cv2
 import os
+from suno_api import generate_audio_by_prompt, get_audio_information
 from dotenv import load_dotenv
 import time
+from summarization import summarize_prompts
 from nvidia import analyze_image
 from azure.storage.blob import BlobClient
+
 
 load_dotenv()
 azure_connection_string = os.environ.get("AZURE_CONNECTION_STRING")
@@ -121,7 +124,30 @@ def upload_images():
             print(f"Failed to upload {blob_name}. Error: {e}")
 
 
+def generate_music():
+    prompt = summarize_prompts("prompt.txt")
+    data = generate_audio_by_prompt({
+        "prompt": prompt,
+        "make_instrumental": False,
+        "wait_audio": False
+    })
+
+    ids = f"{data[0]['id']},{data[1]['id']}"
+    print(f"ids: {ids}")
+
+    for _ in range(60):
+        data = get_audio_information(ids)
+        if data[0]["status"] == 'streaming':
+            print(f"{data[0]['id']} ==> {data[0]['audio_url']}")
+            print(f"{data[1]['id']} ==> {data[1]['audio_url']}")
+            break
+        # sleep 5s
+        time.sleep(5)
+
+    
 if __name__ == "__main__":
     # capture_images()
-    # prompt_from_image()
-    upload_images()
+    prompt_from_image()
+    generate_music()
+    # upload_images()
+

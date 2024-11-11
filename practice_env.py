@@ -1,5 +1,6 @@
 import cv2
 import os
+import requests
 from suno_api import generate_audio_by_prompt, get_audio_information
 from dotenv import load_dotenv
 import time
@@ -63,7 +64,7 @@ def capture_images():
         # Detect faces in the frame
         faces = detect_faces_live(frame, face_cascade)
 
-        if len(faces) > 0 and (time.time() - start_time) >= 10:
+        if len(faces) > 0 and (time.time() - start_time) >= 2:
             font = cv2.FONT_HERSHEY_COMPLEX
             cv2.putText(
                 frame,
@@ -143,11 +144,32 @@ def generate_music():
             break
         # sleep 5s
         time.sleep(5)
+    print(data[0]['audio_url'], data[1]['audio_url'])
+    with open("audio_urls.txt", "w") as f:
+        urls = f.write(f"{data[0]['audio_url']}\n{data[1]['audio_url']}")
+    return urls
+    
+def get_music(url, filename):
+    response = requests.get(url)
+    with open(filename, 'wb') as f:
+        f.write(response.content)
 
+def download_music():
+    with open("audio_urls.txt", "r") as f:
+        read = f.readlines()
+        urls = [line.strip() for line in read]
+        os.makedirs("music", exist_ok=True)
+    filenames = ["music/music1.mp3", "music/music2.mp3"]
+
+    for url, filename in zip(urls, filenames):
+        get_music(url, filename)
+    
+    
     
 if __name__ == "__main__":
     # capture_images()
-    prompt_from_image()
-    generate_music()
+    # prompt_from_image()
+    # generate_music()
+    download_music()
     # upload_images()
 

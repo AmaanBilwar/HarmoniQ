@@ -1,4 +1,4 @@
-### havent decided on a name yet so for now welcome to 
+<!-- ### havent decided on a name yet so for now welcome to 
 
 # MUSIC GENERATION PROJECT test01 (100% Working real)
 
@@ -43,4 +43,4 @@ Despite these efforts, many children are still left without accessible tools for
 4. [Image Analysis](http://build.nvidia.com/)
 4. [Cohere](https://cohere.com/)
 5. [anthropic](https://console.anthropic.com/)
-
+-->

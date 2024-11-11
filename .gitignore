@@ -10,5 +10,7 @@ pyvenv.cfg
 
 .env
 
+/dist 
+/build
 
 suno-api

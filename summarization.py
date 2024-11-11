@@ -16,7 +16,7 @@ def summarize_prompts(file_path):
         {"role": "system", "content": "You are a helpful assistant that needs to summarize the prompts given to create a single prompt that will be used to generate music with sumo ai."},
         {
             "role": "user",
-            "content": f"Summarize the prompts in the file {content}."
+            "content": f"Summarize the prompts in the file {content}. Make sure it doesn't exceed more than 2 sentences. Keep it simple and concise."
         }
     ]
     )

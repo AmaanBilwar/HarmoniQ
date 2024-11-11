@@ -24,8 +24,7 @@ Despite these efforts, many children are still left without accessible tools for
 ## The IDEA🧠
 
 ## rough how it works (potentially)
-
-1. Azure Face API detects faces 
+- clicks
 2. clicks pictures every 10 / 30 seconds 
 3. feeds those pictures to nvidia llama3.2 90B vision model to generate prompts
 4. prompts are use with suno api to generate music
@@ -38,6 +37,7 @@ Despite these efforts, many children are still left without accessible tools for
 ## Resources used & WHY❓ 
 
 1. [Suno App](https://suno.com) -> where this idea came from?
+    - [my SumoAPI hosted on vercel](https://suno-nr7ojy5e4-amaanbilwars-projects.vercel.app/)
 2. [Suno Api](https://github.com/gcui-art/suno-api) 
 3. [Alternative to Suno](https://github.com/facebookresearch/audiocraft)
 4. [Image Analysis](http://build.nvidia.com/)
